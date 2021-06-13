@@ -3,7 +3,7 @@ from ..items import MlivrescrapyItem
 
 class CrawlMlivreSpider(scrapy.Spider):
     name = 'crawl_mlivre'
-    start_urls = ['https://lista.mercadolivre.com.br/smartphone']
+    start_urls = [('https://lista.mercadolivre.com.br/%s' % input(" Qual produto desejas pesquisar? "))]
 
     def parse(self, response):
         item = MlivrescrapyItem()
@@ -14,7 +14,8 @@ class CrawlMlivreSpider(scrapy.Spider):
             item['preco'] = p.css('.ui-search-price--size-medium .ui-search-price__second-line .price-tag-fraction::text').get()
             yield item
         
-        next_pag = response.css('.andes-pagination__button--next .ui-search-link').attrib['href']
-        
-        if next_pag is not None:
+        try:
+            next_pag = response.css('.andes-pagination__button--next .ui-search-link').attrib['href']
             yield scrapy.Request(self.start_urls[0].replace(self.start_urls[0], next_pag), callback=(self.parse))
+        except:
+            quit
