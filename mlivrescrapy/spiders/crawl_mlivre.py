@@ -13,3 +13,8 @@ class CrawlMlivreSpider(scrapy.Spider):
             item['nome'] = p.css('.ui-search-item__title::text').get()
             item['preco'] = p.css('.ui-search-price--size-medium .ui-search-price__second-line .price-tag-fraction::text').get()
             yield item
+        
+        next_pag = response.css('.andes-pagination__button--next .ui-search-link').attrib['href']
+        
+        if next_pag is not None:
+            yield scrapy.Request(self.start_urls[0].replace(self.start_urls[0], next_pag), callback=(self.parse))
